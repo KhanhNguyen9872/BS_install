@@ -17,9 +17,18 @@ class main():
 
     def start(self) -> None:
         self.get_path()
-        self.popup('Click OK to select the installation directory')
+        self.popup('Hello there!\nClick OK to select the installation directory')
         if self.choose():
-            self.popup('Click OK start installation')
+            while 1:
+                choose = self.yesno('PATH: "{path}"\nClick Yes -> Start installation\nClick No -> Choose PATH again\nClick Cancel -> Exit'.format(path = self.path_install.replace(r"\\", "\\").replace(r"\\", "\\").replace(r"\\","\\")))
+                if choose:
+                    break
+                elif choose == None:
+                    return
+
+                if not self.choose():
+                    return
+
             if self.prepare():
                 if not self.install():
                     self.remove()
@@ -32,7 +41,6 @@ class main():
         return not os.system(self.command)
     
     def cp_data(self) -> bool:
-        print(">> Please wait....")
         self.target_data = "\\".join(self.path_install.split(r"\\")[:-1]) + fr"\\{self.default_image}_{self.version}.exe"
         return shutil.copy(
             self.working_dir + r"\\data\\VM.7z",
@@ -60,6 +68,9 @@ class main():
     
     def popup(self, info) -> None:
         messagebox.showinfo(self.title_installation, str(info))
+
+    def yesno(self, info) -> bool:
+        return messagebox.askyesnocancel(self.title_installation, str(info), icon='warning')
     
     def choose(self) -> bool:
         root = tkinter.Tk()
