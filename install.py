@@ -15,7 +15,7 @@ class main():
         self.bsProgramData_Dir = "BlueStacks_nxt"
         self.start()
 
-    def start(self):
+    def start(self) -> None:
         self.get_path()
         self.popup('Click OK to select the installation directory')
         if self.choose():
