@@ -6,9 +6,20 @@ from random import choice
 
 class main():
     def __init__(self) -> None:
+        self.title_installation = "BlueStacks 5 (KhanhNguyen9872)"
+        self.version = "5.12.115.1002"
+        self.exe_installation = "BlueStacksInstaller_5.12.115.1002_native_e9abc662bd6053e7c8e6890ba057d82a_MzsxNQ==.exe"
+        self.default_image = "Pie64"
+        self.country = "VN"
+        self.bsxVersion = "10.3.10.1008"
+        self.bsProgramData_Dir = "BlueStacks_nxt"
+        self.start()
+
+    def start(self):
         self.get_path()
-        self.popup()
+        self.popup('Click OK to select the installation directory')
         if self.choose():
+            self.popup('Click OK start installation')
             if self.prepare():
                 if not self.install():
                     self.remove()
@@ -22,7 +33,7 @@ class main():
     
     def cp_data(self) -> bool:
         print(">> Please wait....")
-        self.target_data = "\\".join(self.path_install.split(r"\\")[:-1]) + r"\\Pie64_5.12.115.1002.exe"
+        self.target_data = "\\".join(self.path_install.split(r"\\")[:-1]) + fr"\\{self.default_image}_{self.version}.exe"
         return shutil.copy(
             self.working_dir + r"\\data\\VM.7z",
             self.target_data
@@ -32,31 +43,31 @@ class main():
         self.command = " ".join([
             'start', 
             '""', 
-            r'"{dir}\\BlueStacksInstaller_5.12.115.1002_native_e9abc662bd6053e7c8e6890ba057d82a_MzsxNQ==.exe"'.format(dir = self.working_dir + r"\\data"), 
+            r'"{dir}\\{exe}"'.format(dir = self.working_dir + r"\\data", exe = self.exe_installation), 
             '-versionMachineID={id}'.format(id = self.get_id()), 
             '-machineID={id}'.format(id = self.get_id()), 
             '-pddir="{path}"'.format(path = self.path_install), 
-            '-defaultImageName=Pie64', 
-            '-imageToLaunch=Pie64', 
+            '-defaultImageName={image}'.format(image = self.default_image), 
+            '-imageToLaunch={image}'.format(image = self.default_image), 
             '-isSSE4Available=1',
             '-appToLaunch=bs5',
-            '-bsxVersion=10.3.10.1008',
-            '-country=VN',
+            '-bsxVersion={bsxV}'.format(bsxV = self.bsxVersion),
+            '-country={country}'.format(country = self.country),
             # '-isWalletFeatureEnabled', 
         ])
         
         return self.cp_data()
     
-    def popup(self) -> None:
-        messagebox.showinfo('BlueStacks 5 (KhanhNguyen9872)', 'Click OK to select the installation directory')
+    def popup(self, info) -> None:
+        messagebox.showinfo(self.title_installation, str(info))
     
     def choose(self) -> bool:
         root = tkinter.Tk()
         root.withdraw()
-        self.path_install = filedialog.askdirectory(initialdir="{}".format(os.environ["PROGRAMDATA"]), title='BlueStacks 5 (KhanhNguyen9872)')
+        self.path_install = filedialog.askdirectory(initialdir = "{}".format(os.environ["PROGRAMDATA"]), title = self.title_installation)
         if not self.path_install:
             return False
-        self.path_install = r"\\".join(str(self.path_install).split("/")) + r"\\BlueStacks_nxt"
+        self.path_install = r"\\".join(str(self.path_install).split("/")) + fr"\\{self.bsProgramData_Dir}"
         return True
     
     def get_id(self) -> str:
